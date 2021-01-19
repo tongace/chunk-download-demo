@@ -27,9 +27,10 @@ class TestController {
     @SneakyThrows
     public void testDownDownLoadLargeFile(HttpServletRequest request, HttpServletResponse response){
         OutputStream out = null;
+        FileInputStream fileInputStream = null;
         try {
             out = response.getOutputStream();
-            FileInputStream fileInputStream = new FileInputStream("/Users/chairat/Playground/Lab/test.pdf");
+            fileInputStream = new FileInputStream("/Users/chairat/Playground/Lab/test.pdf");
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             byte[] buf = new byte[8192];
             int bytesread = 0, bytesBuffered = 0;
@@ -44,6 +45,28 @@ class TestController {
         } finally {
             if (out != null) {
                 out.flush();
+            }
+            if(fileInputStream!=null){
+                fileInputStream.close();
+            }
+        }
+    }
+    @GetMapping("/downloadNoChunk")
+    @SneakyThrows
+    public void testDownDownLoadLargeFileNoChunk(HttpServletRequest request, HttpServletResponse response){
+        OutputStream out = null;
+        FileInputStream fileInputStream = null;
+        try {
+            out = response.getOutputStream();
+            fileInputStream = new FileInputStream("/Users/chairat/Playground/Lab/test.pdf");
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            out.write(fileInputStream.readAllBytes());
+        } finally {
+            if (out != null) {
+                out.flush();
+            }
+            if(fileInputStream!=null){
+                fileInputStream.close();
             }
         }
     }
